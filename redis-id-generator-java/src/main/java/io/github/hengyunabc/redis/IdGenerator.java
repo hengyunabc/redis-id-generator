@@ -81,7 +81,7 @@ public class IdGenerator {
 			jedis = jedisPool.getResource();
 			List<Long> result = (List<Long>) jedis.evalsha(luaSha, 2, tab, ""
 					+ shardId);
-			long id = bulidId(result.get(0), result.get(1), result.get(2),
+			long id = buildId(result.get(0), result.get(1), result.get(2),
 					result.get(3));
 			return id;
 		} catch (JedisConnectionException e) {
@@ -97,15 +97,16 @@ public class IdGenerator {
 		return null;
 	}
 
-	public static long bulidId(long second, long microSecond, long shardId,
+	public static long buildId(long second, long microSecond, long shardId,
 			long seq) {
 		long miliSecond = (second * 1000 + microSecond / 1000);
-		return (miliSecond << (13 + 10)) + (shardId << 10) + seq;
+		return (miliSecond << (12 + 10)) + (shardId << 10) + seq;
 	}
 
 	public static List<Long> parseId(long id) {
-		long miliSecond = id >>> (64 - 41);
-		long shardId = (id & (0x7FF << 10)) >> 10;
+		long miliSecond = id >>> 22;
+		// 2 ^ 12 = 0xFFF
+		long shardId = (id & (0xFFF << 10)) >> 10;
 		long seq = id & 0x3FF;
 
 		List<Long> re = new ArrayList<Long>(4);

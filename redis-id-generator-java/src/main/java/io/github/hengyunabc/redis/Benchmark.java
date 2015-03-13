@@ -11,16 +11,16 @@ public class Benchmark {
 	}
 
 	public void test() throws InterruptedException {
-		int threadCount = 10;
+		int threadCount = 20;
 		final int genCount = 10000;
 		StopWatch watch = new StopWatch();
 		
 		final CountDownLatch latch = new CountDownLatch(threadCount);
 
 		final IdGenerator idGenerator = IdGenerator.builder()
-				.addHost("127.0.0.1", 6379, "28cb70057fc78c9beca0473259c4a579a9ccd26f")
-//				.addHost("127.0.0.1", 7379, "28cb70057fc78c9beca0473259c4a579a9ccd26f")
-//				.addHost("127.0.0.1", 8379, "28cb70057fc78c9beca0473259c4a579a9ccd26f")
+				.addHost("127.0.0.1", 6379, "16ea0a3f345892d8a51243aa3ab5695ce25a178d")
+//				.addHost("127.0.0.1", 7379, "921966051517703de806a15209922df8dbf0365e")
+//				.addHost("127.0.0.1", 8379, "20b3e56ec6ebbb7fb242c3d62372d0f7b1a233b7")
 				.build();
 		
 		watch.start();

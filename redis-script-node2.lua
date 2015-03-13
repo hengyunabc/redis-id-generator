@@ -1,5 +1,5 @@
 local prefix = '__idgenerator_';
-local partitionCount = 1024;
+local partitionCount = 4096;
 local step = 3;
 local startStep = 1;
 

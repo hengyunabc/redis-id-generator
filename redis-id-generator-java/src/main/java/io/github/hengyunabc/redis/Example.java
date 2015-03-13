@@ -9,9 +9,9 @@ public class Example {
 		long userId = 123456789;
 
 		IdGenerator idGenerator = IdGenerator.builder()
-				.addHost("127.0.0.1", 6379, "422f225e8dfaa7c1f81a04a48cf901a8f12346b5")
-//				.addHost("127.0.0.1", 7379, "7486ab152e84a4a7d79a213ef5db5ccad63aaeb1")
-//				.addHost("127.0.0.1", 8379, "cce3a2434c91a9c9ac26e95ab9623b43f2a64546")
+				.addHost("127.0.0.1", 6379, "16ea0a3f345892d8a51243aa3ab5695ce25a178d")
+//				.addHost("127.0.0.1", 7379, "921966051517703de806a15209922df8dbf0365e")
+//				.addHost("127.0.0.1", 8379, "20b3e56ec6ebbb7fb242c3d62372d0f7b1a233b7")
 				.build();
 
 		long id = idGenerator.next(tab, userId);
