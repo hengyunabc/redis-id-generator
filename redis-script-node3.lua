@@ -12,7 +12,7 @@ else
   partition = KEYS[2] % partitionCount;
 end
 
-local miliSecondKey = prefix .. partition .. 'count';
+local miliSecondKey = prefix .. tag ..'_' .. partition;
 
 local count;
 repeat

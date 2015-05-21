@@ -59,13 +59,13 @@ wget https://raw.githubusercontent.com/hengyunabc/redis-id-generator/master/redi
 ```
 获取lua脚本的sha1值，可能是：
 ```
-16ea0a3f345892d8a51243aa3ab5695ce25a178d
+fce3758b2e0af6cbf8fea4d42b379cd0dc374418
 ```
 在代码里，通过EVALSHA命令，传递这个sha1值，就可以得到生成的ID。
 
 比如，通过命令行执行：
 ```bash
-./redis-cli EVALSHA 16ea0a3f345892d8a51243aa3ab5695ce25a178d 2 test 123456789
+./redis-cli EVALSHA fce3758b2e0af6cbf8fea4d42b379cd0dc374418 2 test 123456789
 ```
 结果可能是：
 ```
@@ -113,9 +113,9 @@ public class Example {
 		long userId = 123456789;
 
 		IdGenerator idGenerator = IdGenerator.builder()
-				.addHost("127.0.0.1", 6379, "16ea0a3f345892d8a51243aa3ab5695ce25a178d")
-//				.addHost("127.0.0.1", 7379, "921966051517703de806a15209922df8dbf0365e")
-//				.addHost("127.0.0.1", 8379, "20b3e56ec6ebbb7fb242c3d62372d0f7b1a233b7")
+				.addHost("127.0.0.1", 6379, "fce3758b2e0af6cbf8fea4d42b379cd0dc374418")
+//				.addHost("127.0.0.1", 7379, "1abc55928f37176cb934fc7a65069bf32282d817")
+//				.addHost("127.0.0.1", 8379, "b056d20feb3f89483b10c81027440cbf6920f74f")
 				.build();
 
 		long id = idGenerator.next(tab, userId);
