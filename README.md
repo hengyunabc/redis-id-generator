@@ -6,9 +6,9 @@ distributed id generator based on redis.
 
 首先，要知道redis的EVAL，EVALSHA命令：
 
-http://redis.readthedocs.org/en/latest/script/eval.html
+http://redis.io/commands/eval
 
-http://redis.readthedocs.org/en/latest/script/evalsha.html
+http://redis.io/commands/evalsha
 
 ##原理
 利用redis的lua脚本执行功能，在每个节点上通过lua脚本生成唯一ID。
@@ -23,7 +23,7 @@ http://redis.readthedocs.org/en/latest/script/evalsha.html
 5981966696448054276 = 1426212000000 << 22 + 53 << 10 + 4
 ```
 
-redis提供了[TIME](http://redis.readthedocs.org/en/latest/server/time.html)命令，可以取得redis服务器上的秒数和微秒数。因些lua脚本返回的是一个四元组。
+redis提供了[TIME](http://redis.io/commands/time)命令，可以取得redis服务器上的秒数和微秒数。因些lua脚本返回的是一个四元组。
 ```
 second, microSecond, partition, seq
 ```
@@ -48,6 +48,13 @@ second, microSecond, partition, seq
 ```
 这样每个节点返回的数据都是唯一的。
 
+###注意事项
+
+* 要求redis server版本是3.2以上，因为使用到了`redis.replicate_commands()`
+
+参考：http://redis.io/commands/eval
+
+* 因为是利用了redis的time命令来获取到redis服务器上的时间，所以reids服务器的时间要保证是只增长的，要关闭服务器上的ntp等时间同步机制。
 
 ##单个节点部署
 
@@ -55,17 +62,17 @@ second, microSecond, partition, seq
 ```bash
 cd redis-directory/
 wget https://raw.githubusercontent.com/hengyunabc/redis-id-generator/master/redis-script-node1.lua
-./redis-cli script load "$(cat redis-script-node1.lua)" 
+./redis-cli script load "$(cat redis-script-node1.lua)"
 ```
 获取lua脚本的sha1值，可能是：
 ```
-fce3758b2e0af6cbf8fea4d42b379cd0dc374418
+c5809078fa6d652e0b0232d552a9d06d37fe819c
 ```
 在代码里，通过EVALSHA命令，传递这个sha1值，就可以得到生成的ID。
 
 比如，通过命令行执行：
 ```bash
-./redis-cli EVALSHA fce3758b2e0af6cbf8fea4d42b379cd0dc374418 2 test 123456789
+./redis-cli EVALSHA c5809078fa6d652e0b0232d552a9d06d37fe819c 2 test 123456789
 ```
 结果可能是：
 ```
@@ -78,9 +85,9 @@ fce3758b2e0af6cbf8fea4d42b379cd0dc374418
 ## 集群部署
 假定集群是3个节点，则分别对三个节点执行：
 ```bash
-./redis-cli -host node1 -p 6379 script load "$(cat redis-script-node1.lua)" 
-./redis-cli -host node2 -p 7379 script load "$(cat redis-script-node2.lua)" 
-./redis-cli -host node3 -p 8379 script load "$(cat redis-script-node3.lua)" 
+./redis-cli -host node1 -p 6379 script load "$(cat redis-script-node1.lua)"
+./redis-cli -host node2 -p 7379 script load "$(cat redis-script-node2.lua)"
+./redis-cli -host node3 -p 8379 script load "$(cat redis-script-node3.lua)"
 ```
 
 ##性能
@@ -113,9 +120,9 @@ public class Example {
 		long userId = 123456789;
 
 		IdGenerator idGenerator = IdGenerator.builder()
-				.addHost("127.0.0.1", 6379, "fce3758b2e0af6cbf8fea4d42b379cd0dc374418")
-//				.addHost("127.0.0.1", 7379, "1abc55928f37176cb934fc7a65069bf32282d817")
-//				.addHost("127.0.0.1", 8379, "b056d20feb3f89483b10c81027440cbf6920f74f")
+				.addHost("127.0.0.1", 6379, "c5809078fa6d652e0b0232d552a9d06d37fe819c")
+//				.addHost("127.0.0.1", 7379, "accb7a987d4fb0fd85c57dc5a609529f80ec3722")
+//				.addHost("127.0.0.1", 8379, "f55f781ca4a00a133728488e15a554c070b17255")
 				.build();
 
 		long id = idGenerator.next(tab, userId);
