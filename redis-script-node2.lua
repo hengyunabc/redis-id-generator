@@ -1,3 +1,7 @@
+
+-- need redis 3.2+
+redis.replicate_commands();
+
 local prefix = '__idgenerator_';
 local partitionCount = 4096;
 local step = 3;
@@ -12,17 +16,22 @@ else
   partition = KEYS[2] % partitionCount;
 end
 
-local miliSecondKey = prefix .. tag ..'_' .. partition;
+local now = redis.call('TIME');
+
+local miliSecondKey = prefix .. tag ..'_' .. partition .. '_' .. now[1] .. '_' .. math.floor(now[2]/1000);
 
 local count;
 repeat
   count = tonumber(redis.call('INCRBY', miliSecondKey, step));
-until count < (1024 - step)
+  if count > (1024 - step) then
+      now = redis.call('TIME');
+      miliSecondKey = prefix .. tag ..'_' .. partition .. '_' .. now[1] .. '_' .. math.floor(now[2]/1000);
+  end
+until count <= (1024 - step)
 
 if count == step then
-  redis.call('PEXPIRE', miliSecondKey, 1);
+  redis.call('PEXPIRE', miliSecondKey, 5);
 end
 
-local now = redis.call('TIME');
 -- second, microSecond, partition, seq
 return {tonumber(now[1]), tonumber(now[2]), partition, count + startStep}
