@@ -10,7 +10,7 @@ http://redis.io/commands/eval
 
 http://redis.io/commands/evalsha
 
-##原理
+## 原理
 利用redis的lua脚本执行功能，在每个节点上通过lua脚本生成唯一ID。
 生成的ID是64位的：
 
@@ -33,7 +33,7 @@ second, microSecond, partition, seq
 ((second * 1000 + microSecond / 1000) << (12 + 10)) + (shardId << 10) + seq;
 ```
 
-###集群实现原理
+### 集群实现原理
 假定集群里有3个节点，则节点1返回的seq是：
 ```
 0, 3, 6, 9, 12 ...
@@ -48,7 +48,7 @@ second, microSecond, partition, seq
 ```
 这样每个节点返回的数据都是唯一的。
 
-###注意事项
+### 注意事项
 
 * 要求redis server版本是3.2以上，因为使用到了`redis.replicate_commands()`
 
@@ -56,7 +56,7 @@ second, microSecond, partition, seq
 
 * 因为是利用了redis的time命令来获取到redis服务器上的时间，所以reids服务器的时间要保证是只增长的，要关闭服务器上的ntp等时间同步机制。
 
-##单个节点部署
+## 单个节点部署
 
 下载redis-script-node1.lua，并把它load到redis上。
 ```bash
@@ -90,7 +90,7 @@ c5809078fa6d652e0b0232d552a9d06d37fe819c
 ./redis-cli -host node3 -p 8379 script load "$(cat redis-script-node3.lua)"
 ```
 
-##性能
+## 性能
 redis默认配置。
 
 ```
@@ -105,7 +105,7 @@ speed:29806.259314456034
 - 单节点，qps约3w
 - 可以线性扩展，3个结点足以满足绝大部分的应用
 
-##java客户端封装
+## java客户端封装
 在redis-id-generator-java目录下，有example和benchmark代码。
 
 在调用时，要传入两个参数
@@ -136,5 +136,5 @@ public class Example {
 }
 ```
 
-##多语言客户端
+## 多语言客户端
 只要支持redis evalsha命令就可以了。
